@@ -40,7 +40,7 @@ app.use(cors({
 
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['http://localhost:5173','http://localhost:5174', 'https://todo-mern-becodewala.vercel.app']; 
+    const allowedOrigins = ['http://localhost:5173','http://localhost:5174', 'https://todo-frontend-becodewala.vercel.app']; 
     // Add all allowed origins here
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);  // Allow the request
