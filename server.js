@@ -23,7 +23,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL_PROD,
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -32,7 +32,9 @@ app.use(cors({
     }
   },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 
 // ✅ Handle Preflight Requests
 app.options('*', (req, res) => {
