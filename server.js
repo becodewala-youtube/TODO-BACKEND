@@ -17,34 +17,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ CORS Configuration
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.FRONTEND_URL_PROD,
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+// ✅ Updated CORS Configuration
+app.use(cors({
+  origin: 'https://todo-frontend-becodewala.vercel.app',
   credentials: true,
-};
-
-app.use(cors(corsOptions));
+}));
 
 // ✅ Handle Preflight Requests
 app.options('*', (req, res) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  }
+  res.setHeader('Access-Control-Allow-Origin', 'https://todo-frontend-becodewala.vercel.app');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.sendStatus(200);
 });
 
