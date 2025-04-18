@@ -17,20 +17,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ Updated CORS Configuration
-app.use(cors({
-  origin: 'https://todo-frontend-becodewala.vercel.app',
-  credentials: true,
-}));
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_PROD,
+];
 
-// ✅ Handle Preflight Requests
-app.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://todo-frontend-becodewala.vercel.app');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.sendStatus(200);
-});
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
