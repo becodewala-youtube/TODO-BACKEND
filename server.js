@@ -18,7 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Middleware
-app.options(“*”, cors())
+app.options('*', cors({  
+  origin: 'https://todo-frontend-becodewala.vercel.app',  
+  credentials: true,  
+})); 
 
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
