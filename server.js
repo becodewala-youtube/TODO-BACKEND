@@ -11,49 +11,29 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Connect to MongoDB
 connectDB();
 
-// Parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ Allowed frontend origins
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.FRONTEND_URL_PROD,
-];
-
-// ✅ Manually handle CORS headers (Vercel-safe)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  }
-
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
-
-// ✅ Use cors AFTER manual headers
+// Middleware
 app.use(cors({
-  origin: true, // dynamically reflect origin
-  credentials: true, // allow cookies
+  origin: (origin, callback) => {
+    const allowedOrigins = ['http://localhost:5173','http://localhost:5174', 'https://todo-frontend-becodewala.vercel.app']; 
+    // Add all allowed origins here
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'));  // Reject the request
+    }
+  },
+  credentials: true,  // Allow cookies to be sent
 }));
 
-// ✅ API routes
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// ✅ Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
